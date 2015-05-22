@@ -1,0 +1,180 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Alestic Unreliable Town Clock https://github.com/alestic/alestic-unreliable-town-clock",
+
+  "Parameters" : {
+    "InstanceType" : {
+      "Description" : "Server EC2 instance type",
+      "Type" : "String",
+      "AllowedValues" : ["t2.micro"],
+      "Default" : "t2.micro"
+    },
+    "OperatorEmail": {
+      "Description": "Email address to notify if there are any scaling operations",
+      "Type" : "String",
+      "Default": "your-address@example.com"
+    },
+    "SshKeyName" : {
+      "Description" : "The EC2 Key Pair to allow SSH access to the instances",
+      "Type" : "String",
+      "Default": "your-ssh-keypair"
+    },
+    "InstallScriptURL" : {
+      "Description" : "URL of script to install/configure new instances",
+      "Type" : "String",
+      "Default" : "https://raw.githubusercontent.com/alestic/alestic-unreliable-town-clock/master/unreliable-town-clock-install"
+    }
+  },
+
+  "Mappings" : {
+    "AMIRegionMap" : {
+      "us-east-1"      : { "AMIID" : "ami-20534248" },
+      "us-west-1"      : { "AMIID" : "ami-abeb05ef" },
+      "us-west-2"      : { "AMIID" : "ami-cbccfcfb" },
+      "eu-central-1"   : { "AMIID" : "ami-468eb15b" },
+      "eu-west-1"      : { "AMIID" : "ami-6db2d91a" },
+      "ap-northeast-1" : { "AMIID" : "ami-82509e82" },
+      "ap-southeast-1" : { "AMIID" : "ami-4286b910" },
+      "ap-southeast-2" : { "AMIID" : "ami-d3afd0e9" },
+      "sa-east-1"      : { "AMIID" : "ami-7577f068" }
+    }
+  },
+
+  "Resources" : {
+    "NotificationTopic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "Subscription": [ {
+            "Endpoint": { "Ref": "OperatorEmail" },
+            "Protocol": "email" } ]
+      }
+    },
+    "UnreliableTownClockTopic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+      }
+    },
+
+    "ServerGroup" : {
+      "Type" : "AWS::AutoScaling::AutoScalingGroup",
+      "Properties" : {
+        "AvailabilityZones" : { "Fn::GetAZs" : ""},
+        "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
+        "MinSize" : 1,
+        "MaxSize" : 1,
+        "NotificationConfiguration" : {
+          "TopicARN" : { "Ref" : "NotificationTopic" },
+          "NotificationTypes" : [ "autoscaling:EC2_INSTANCE_LAUNCH","autoscaling:EC2_INSTANCE_LAUNCH_ERROR","autoscaling:EC2_INSTANCE_TERMINATE", "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"]
+        }
+      }
+    },
+
+    "Role": {
+       "Type": "AWS::IAM::Role",
+       "Properties": {
+          "Path": "/",
+          "AssumeRolePolicyDocument": {
+             "Version" : "2012-10-17",
+             "Statement": [ {
+                "Effect": "Allow",
+                "Principal": {
+                   "Service": [ "ec2.amazonaws.com" ]
+                },
+                "Action": [ "sts:AssumeRole" ]
+             } ]
+          }
+       }
+    },
+
+    "RolePolicies": {
+       "Type": "AWS::IAM::Policy",
+       "Properties": {
+          "PolicyName": "root",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "sns:Publish"
+                ],
+                "Resource": { "Fn::Join" : ["", [
+                  "arn:aws:sns:",
+                  { "Ref" : "AWS::Region" }, ":",
+                  { "Ref" : "AWS::AccountId" }, ":",
+                  { "Ref" : "UnreliableTownClockTopic" }
+                ]]}
+              }
+            ]
+          },
+          "Roles": [ { "Ref": "Role" } ]
+       }
+    },
+
+    "InstanceProfile" : {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [ { "Ref" : "Role" } ]
+      }
+    },
+
+    "LaunchConfig" : {
+      "Type" : "AWS::AutoScaling::LaunchConfiguration",
+      "Properties" : {
+        "KeyName" : { "Ref" : "SshKeyName" },
+        "ImageId" : { "Fn::FindInMap" : [ "AMIRegionMap", { "Ref" : "AWS::Region" }, "AMIID" ] },
+        "SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
+        "InstanceType" : { "Ref" : "InstanceType" },
+        "InstanceMonitoring": "true",
+        "IamInstanceProfile" : { "Ref" : "InstanceProfile" },
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash -ex\n",
+          "exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1\n",
+          "install=$(mktemp /tmp/install.XXXXXX)\n",
+          "curl --location --retry 10 -o $install ", { "Ref" : "InstallScriptURL" }, "\n",
+          "chmod 700 $install", "\n",
+          "$install ",
+            "'", { "Ref" : "WaitForInstanceWaitHandle" }, "' ",
+            "'", { "Ref" : "OperatorEmail" }, "' ",
+            "\n",
+          ""
+        ]]}}
+      }
+    },
+
+    "WaitForInstanceWaitHandle" : {
+      "Type" : "AWS::CloudFormation::WaitConditionHandle",
+      "Properties" : {
+      }
+    },
+    "WaitForInstance" : {
+      "Type" : "AWS::CloudFormation::WaitCondition",
+      "DependsOn" : "ServerGroup",
+      "Properties" : {
+        "Handle" : { "Ref" : "WaitForInstanceWaitHandle" },
+        "Timeout" : "15"
+      }
+    },
+
+    "InstanceSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "SSH access from anywhere",
+        "SecurityGroupIngress" : [ {
+          "IpProtocol" : "tcp",
+          "FromPort" : "22",
+          "ToPort" : "22",
+          "CidrIp" : "0.0.0.0/0"
+        } ]
+      }
+    }
+  },
+
+  "Outputs" : {
+    "SNSTopic" : {
+      "Value" : { "Ref" : "UnreliableTownClockTopic" }
+    }
+  }
+}

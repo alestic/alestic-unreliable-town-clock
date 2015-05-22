@@ -1,0 +1,52 @@
+#!/bin/bash -ex
+#
+# unreliable-town-clock-install
+#
+# https://github.com/alestic/alestic-unreliable-town-clock
+#
+waithandle="$1"
+sns_topic_arn="$2"
+
+host="unreliable-town-clock"
+
+if [ -n "$waithandle" ]; then
+    # Let CloudFormation know if this instance fails
+    trap '
+        instance_id=$(curl -s http://instance-data/latest/meta-data/instance-id)
+        curl -X PUT -H '"'"'Content-Type:'"'"' --data-binary '"'"'{"Status":"FAILURE","Reason":"Configuration Failed","UniqueId":"'$instance_id'","Data":"Error during instance initialization. See /var/log/user-data.log"}'"'"' "$waithandle"
+    ' ERR
+fi
+
+echo "INSTANCE CONFIGURATION START"
+
+hostname $host
+echo "127.0.1.2 $host" >> /etc/hosts
+echo $host.$domain > /etc/hostname
+echo $host.$domain > /etc/mailname
+service rsyslog restart
+
+apt-get update
+apt-get dist-upgrade -y
+apt-get install -y awscli
+
+# Our purpose for being
+
+publish_source=https://raw.githubusercontent.com/alestic/alestic-unreliable-town-clock/master/unreliable-town-clock-publish
+publish=/usr/local/bin/unreliable-town-clock-publish
+crontab=/etc/cron.d/unreliable-town-clock
+
+curl -s --location --retry 10 -o $publish $publish_source
+chmod +x $publish
+
+cat <<EOF >$cronfile
+0,15,30,45 * * * * ubuntu $publish "$sns_topic_arn"
+EOF
+
+# Let CloudFormation know this instance is ready.
+
+if [ -n "$waithandle" ]; then
+    instance_id=$(curl -s http://instance-data/latest/meta-data/instance-id)
+    curl -X PUT -H 'Content-Type:' --data-binary '{"Status":"SUCCESS","Reason":"Configuration Complete","UniqueId":"'$instance_id'","Data":"Instance has completed configuration."}' "$waithandle"
+fi
+
+echo "INSTANCE CONFIGURATION COMPLETE"

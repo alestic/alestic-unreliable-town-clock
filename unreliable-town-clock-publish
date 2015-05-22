@@ -1,0 +1,28 @@
+#!/bin/bash -e
+#
+# unreliable-town-clock-publish
+#
+# https://github.com/alestic/alestic-unreliable-town-clock
+#
+
+sns_topic_arn="$1"
+
+timestamp="$(date -u +"%Y-%m-%d %H:%M %Z")"
+
+message='{
+  "timestamp": "'$timestamp'",
+  "unique_id": "'$(uuidgen)'",
+  "reference": "https://github.com/alestic/alestic-unreliable-town-clock",
+  "warning": "DO NOT DEPEND ON THIS SERVICE FOR ACCURACY, UPTIME, OR LONGEVITY"
+}'
+
+payload=$(echo -n "$message" |
+  python -c 'import json,sys; print json.dumps(sys.stdin.read())')
+
+aws sns publish \
+  --topic-arn "$sns_topic_arn" \
+  --subject "[Unreliable Town Clock] $timestamp" \
+  --message-structure json \
+  --message '{
+    "default": '"$payload"'
+  }'

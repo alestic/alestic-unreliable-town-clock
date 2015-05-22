@@ -205,9 +205,6 @@
     "SNSTopic" : {
       "Value" : { "Ref" : "UnreliableTownClockTopic" }
     },
-    "PublicUser": {
-      "Value" : { "Ref" : "PublicUser" }
-    },
     "PublicAccessKeyID": {
       "Value" : { "Ref" : "PublicAccessKey" }
     },

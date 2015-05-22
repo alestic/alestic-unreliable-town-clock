@@ -6,6 +6,7 @@
 #
 
 sns_topic_arn="$1"
+region="$2"
 
 timestamp="$(date -u +"%Y-%m-%d %H:%M %Z")"
 
@@ -20,6 +21,7 @@ payload=$(echo -n "$message" |
   python -c 'import json,sys; print json.dumps(sys.stdin.read())')
 
 aws sns publish \
+  --region "$region" \
   --topic-arn "$sns_topic_arn" \
   --subject "[Unreliable Town Clock] $timestamp" \
   --message-structure json \

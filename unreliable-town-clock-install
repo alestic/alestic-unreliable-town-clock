@@ -6,6 +6,7 @@
 #
 waithandle="$1"
 sns_topic_arn="$2"
+region="$3"
 
 host="unreliable-town-clock"
 
@@ -39,7 +40,7 @@ curl -s --location --retry 10 -o $publish $publish_source
 chmod +x $publish
 
 cat <<EOF >$crontab
-0,15,30,45 * * * * ubuntu $publish "$sns_topic_arn"
+0,15,30,45 * * * * ubuntu $publish "$sns_topic_arn" '$region"
 EOF
 
 # Let CloudFormation know this instance is ready.

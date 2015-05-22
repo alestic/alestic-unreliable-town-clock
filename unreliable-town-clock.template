@@ -42,7 +42,7 @@
   },
 
   "Resources" : {
-    "NotificationTopic": {
+    "ScalingNotificationTopic": {
       "Type": "AWS::SNS::Topic",
       "Properties": {
         "Subscription": [ {
@@ -53,6 +53,10 @@
     "UnreliableTownClockTopic": {
       "Type": "AWS::SNS::Topic",
       "Properties": {
+        "Subscription": [ {
+            "Protocol": "email",
+            "Endpoint": { "Ref": "OperatorEmail" }
+        } ]
       }
     },
 
@@ -64,7 +68,7 @@
         "MinSize" : 1,
         "MaxSize" : 1,
         "NotificationConfiguration" : {
-          "TopicARN" : { "Ref" : "NotificationTopic" },
+          "TopicARN" : { "Ref" : "ScalingNotificationTopic" },
           "NotificationTypes" : [ "autoscaling:EC2_INSTANCE_LAUNCH","autoscaling:EC2_INSTANCE_LAUNCH_ERROR","autoscaling:EC2_INSTANCE_TERMINATE", "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"]
         }
       }
@@ -131,6 +135,7 @@
           "$install ",
             "'", { "Ref" : "WaitForInstanceWaitHandle" }, "' ",
             "'", { "Ref" : "UnreliableTownClockTopic" }, "' ",
+            "'", { "Ref" : "AWS::Region" }, "' ",
             "\n",
           ""
         ]]}}

@@ -9,12 +9,17 @@ sns_topic_arn="$1"
 region="$2"
 
 timestamp="$(date -u +"%Y-%m-%d %H:%M %Z")"
+hour=${timestamp:11:2}
+minute=${timestamp:14:2}
 
 message='{
+  "type" : "chime",
   "timestamp": "'$timestamp'",
+  "hour": "'$hour'",
+  "minute": "'$minute'",
   "unique_id": "'$(uuidgen)'",
   "reference": "https://github.com/alestic/alestic-unreliable-town-clock",
-  "warning": "DO NOT DEPEND ON THIS SERVICE FOR ACCURACY, UPTIME, OR LONGEVITY"
+  "disclaimer": "DO NOT DEPEND ON THIS SERVICE FOR ANYTHING INCLUDING ACCURACY, CONSISTENCY, UPTIME, OR LONGEVITY"
 }'
 
 payload=$(echo -n "$message" |
@@ -23,7 +28,7 @@ payload=$(echo -n "$message" |
 aws sns publish \
   --region "$region" \
   --topic-arn "$sns_topic_arn" \
-  --subject "[Unreliable Town Clock] $timestamp" \
+  --subject "[Unreliable Town Clock] chime: $timestamp" \
   --message-structure json \
   --message '{
     "default": '"$payload"'

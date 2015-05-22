@@ -38,7 +38,7 @@ crontab=/etc/cron.d/unreliable-town-clock
 curl -s --location --retry 10 -o $publish $publish_source
 chmod +x $publish
 
-cat <<EOF >$cronfile
+cat <<EOF >$crontab
 0,15,30,45 * * * * ubuntu $publish "$sns_topic_arn"
 EOF
 

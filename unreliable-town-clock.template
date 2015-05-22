@@ -167,12 +167,52 @@
           "CidrIp" : "0.0.0.0/0"
         } ]
       }
+    },
+
+    "PublicUser" : {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Policies": [ {
+          "PolicyName": "unreliable-town-clock-public-user-policy",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Action": [
+                  "sns:Subscribe",
+                  "sns:ConfirmSubscription",
+                  "sns:Unsubscribe"
+                ],
+                "Effect": "Allow",
+                "Resource": { "Ref" : "UnreliableTownClockTopic" }
+              }
+            ]
+          }
+        } ]
+      }
+    },
+
+    "PublicAccessKey" : {
+      "Type": "AWS::IAM::AccessKey",
+      "Properties": {
+        "Status": "Active",
+        "UserName": { "Ref" : "PublicUser" }
+      }
     }
   },
 
   "Outputs" : {
     "SNSTopic" : {
       "Value" : { "Ref" : "UnreliableTownClockTopic" }
+    },
+    "PublicUser": {
+      "Value" : { "Ref" : "PublicUser" }
+    },
+    "PublicAccessKeyID": {
+      "Value" : { "Ref" : "PublicAccessKey" }
+    },
+    "PublicSecretAccessKey": {
+      "Value" : { "Fn::GetAtt" : [ "PublicAccessKey" , "SecretAccessKey" ] }
     }
   }
 }

@@ -154,7 +154,7 @@
       "DependsOn" : "ServerGroup",
       "Properties" : {
         "Handle" : { "Ref" : "WaitForInstanceWaitHandle" },
-        "Timeout" : "15"
+        "Timeout" : "900"
       }
     },
 

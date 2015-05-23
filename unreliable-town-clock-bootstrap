@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 #
-# unreliable-town-clock-install
+# unreliable-town-clock-bootstrap
 #
 # https://github.com/alestic/alestic-unreliable-town-clock
 #

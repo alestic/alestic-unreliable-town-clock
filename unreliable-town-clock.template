@@ -23,7 +23,7 @@
     "InstallScriptURL" : {
       "Description" : "URL of script to install/configure new instances",
       "Type" : "String",
-      "Default" : "https://raw.githubusercontent.com/alestic/alestic-unreliable-town-clock/master/unreliable-town-clock-install"
+      "Default" : "https://raw.githubusercontent.com/alestic/alestic-unreliable-town-clock/master/unreliable-town-clock-bootstrap"
     }
   },
 

@@ -20,7 +20,7 @@ message='{
   "minute": "'$minute'",
   "unique_id": "'$(uuidgen)'",
   "reference": "https://github.com/alestic/alestic-unreliable-town-clock",
-  "disclaimer": "DO NOT DEPEND ON THIS SERVICE FOR ANYTHING INCLUDING ACCURACY, CONSISTENCY, UPTIME, OR LONGEVITY"
+  "disclaimer": "UNRELIABLE SERVICE FOR ACCURACY, CONSISTENCY, UPTIME, LONGEVITY, ..."
 }'
 payload=$(echo -n "$message" |
   python -c 'import json,sys; print json.dumps(sys.stdin.read())')

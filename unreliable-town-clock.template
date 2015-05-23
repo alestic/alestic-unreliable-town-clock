@@ -50,6 +50,7 @@
             "Protocol": "email" } ]
       }
     },
+
     "UnreliableTownClockTopic": {
       "Type": "AWS::SNS::Topic",
       "Properties": {
@@ -58,6 +59,62 @@
             "Endpoint": { "Ref": "OperatorEmail" }
         } ]
       }
+    },
+
+    "PublicSubscribeTopicPolicy": {
+      "Type" : "AWS::SNS::TopicPolicy",
+      "Properties" : {
+          "PolicyDocument" : {
+            "Version": "2008-10-17",
+            "Statement": [
+              {
+                "Sid": "owner-policy-statement",
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": "*"
+                },
+                "Action": [
+                  "SNS:Publish",
+                  "SNS:RemovePermission",
+                  "SNS:SetTopicAttributes",
+                  "SNS:DeleteTopic",
+                  "SNS:ListSubscriptionsByTopic",
+                  "SNS:GetTopicAttributes",
+                  "SNS:Receive",
+                  "SNS:AddPermission",
+                  "SNS:Subscribe"
+                ],
+                "Resource": { "Ref": "UnreliableTownClockTopic" },
+                "Condition": {
+                  "StringEquals": {
+                    "AWS:SourceOwner": { "Ref": "AWS::AccountId" }
+                  }
+                }
+              },
+              {
+                "Sid": "public-policy-statement",
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": "*"
+                },
+                "Action": [
+                  "SNS:Receive",
+                  "SNS:Subscribe"
+                ],
+                "Resource": { "Ref": "UnreliableTownClockTopic" },
+                "Condition": {
+                  "StringEquals": {
+                    "SNS:Protocol": [
+                      "lambda",
+                      "sqs"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          "Topics" : [ { "Ref": "UnreliableTownClockTopic" } ]
+        }
     },
 
     "ServerGroup" : {
@@ -167,49 +224,12 @@
           "CidrIp" : "0.0.0.0/0"
         } ]
       }
-    },
-
-    "PublicUser" : {
-      "Type": "AWS::IAM::User",
-      "Properties": {
-        "Policies": [ {
-          "PolicyName": "unreliable-town-clock-public-user-policy",
-          "PolicyDocument": {
-            "Version": "2012-10-17",
-            "Statement": [
-              {
-                "Action": [
-                  "sns:Subscribe",
-                  "sns:ConfirmSubscription",
-                  "sns:Unsubscribe"
-                ],
-                "Effect": "Allow",
-                "Resource": { "Ref" : "UnreliableTownClockTopic" }
-              }
-            ]
-          }
-        } ]
-      }
-    },
-
-    "PublicAccessKey" : {
-      "Type": "AWS::IAM::AccessKey",
-      "Properties": {
-        "Status": "Active",
-        "UserName": { "Ref" : "PublicUser" }
-      }
     }
   },
 
   "Outputs" : {
     "SNSTopic" : {
       "Value" : { "Ref" : "UnreliableTownClockTopic" }
-    },
-    "PublicAccessKeyID": {
-      "Value" : { "Ref" : "PublicAccessKey" }
-    },
-    "PublicSecretAccessKey": {
-      "Value" : { "Fn::GetAtt" : [ "PublicAccessKey" , "SecretAccessKey" ] }
     }
   }
 }

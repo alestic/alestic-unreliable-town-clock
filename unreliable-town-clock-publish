@@ -12,6 +12,7 @@ timestamp="$(date -u +"%Y-%m-%d %H:%M %Z")"
 hour=${timestamp:11:2}
 minute=${timestamp:14:2}
 
+subject="[Unreliable Town Clock] chime: $timestamp"
 message='{
   "type" : "chime",
   "timestamp": "'$timestamp'",
@@ -21,14 +22,13 @@ message='{
   "reference": "https://github.com/alestic/alestic-unreliable-town-clock",
   "disclaimer": "DO NOT DEPEND ON THIS SERVICE FOR ANYTHING INCLUDING ACCURACY, CONSISTENCY, UPTIME, OR LONGEVITY"
 }'
-
 payload=$(echo -n "$message" |
   python -c 'import json,sys; print json.dumps(sys.stdin.read())')
 
 aws sns publish \
   --region "$region" \
   --topic-arn "$sns_topic_arn" \
-  --subject "[Unreliable Town Clock] chime: $timestamp" \
+  --subject "$subject" \
   --message-structure json \
   --message '{
     "default": '"$payload"'

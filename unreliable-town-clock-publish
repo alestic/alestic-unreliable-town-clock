@@ -9,6 +9,9 @@ sns_topic_arn="$1"
 region="$2"
 
 timestamp="$(date -u +"%Y-%m-%d %H:%M %Z")"
+year=${timestamp:0:4}
+month=${timestamp:5:2}
+day=${timestamp:8:2}
 hour=${timestamp:11:2}
 minute=${timestamp:14:2}
 
@@ -16,6 +19,9 @@ subject="[Unreliable Town Clock] chime: $timestamp"
 message='{
   "type" : "chime",
   "timestamp": "'$timestamp'",
+  "year": "'$year'",
+  "month": "'$month'",
+  "day": "'$day'",
   "hour": "'$hour'",
   "minute": "'$minute'",
   "unique_id": "'$(uuidgen)'",

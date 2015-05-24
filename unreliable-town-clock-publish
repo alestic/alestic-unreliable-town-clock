@@ -9,12 +9,12 @@ sns_topic_arn="$1"
 region="$2"
 
 timestamp="$(date -u +"%Y-%m-%d %H:%M %Z")"
-day_of_week="$(date -u +"%a")"
 year=${timestamp:0:4}
 month=${timestamp:5:2}
 day=${timestamp:8:2}
 hour=${timestamp:11:2}
 minute=${timestamp:14:2}
+day_of_week="$(date -u --date="$timestamp" +"%a")"
 
 subject="[Unreliable Town Clock] chime: $timestamp"
 message='{

@@ -106,6 +106,7 @@
                 "Condition": {
                   "StringEquals": {
                     "SNS:Protocol": [
+                      "email",
                       "lambda",
                       "sqs"
                     ]

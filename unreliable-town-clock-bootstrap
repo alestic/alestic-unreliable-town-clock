@@ -4,8 +4,8 @@
 #
 # https://github.com/alestic/alestic-unreliable-town-clock
 #
-sns_topic_arn="$2"
-region="$3"
+sns_topic_arn="$1"
+region="$2"
 
 echo "INSTANCE CONFIGURATION START"
 

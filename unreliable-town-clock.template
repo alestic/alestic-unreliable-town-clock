@@ -17,7 +17,7 @@
       "Default": "your-address@example.com"
     },
     "SshKeyName" : {
-      "Description" : "The EC2 keypair to allow SSH access to the instances",
+      "Description" : "The EC2 keypair to allow SSH access to the instance",
       "Type" : "String",
       "Default": ""
     },
@@ -204,12 +204,12 @@
     "InstanceSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-        "GroupDescription" : "SSH access from anywhere",
+        "GroupDescription" : "SSH access from nowhere",
         "SecurityGroupIngress" : [ {
           "IpProtocol" : "tcp",
           "FromPort" : "22",
           "ToPort" : "22",
-          "CidrIp" : "0.0.0.0/0"
+          "CidrIp" : "0.0.0.0/32"
         } ]
       }
     }
@@ -218,6 +218,9 @@
   "Outputs" : {
     "SNSTopic" : {
       "Value" : { "Ref" : "UnreliableTownClockTopic" }
+    },
+    "SecurityGroup" : {
+      "Value" : { "Ref" : "InstanceSecurityGroup" }
     }
   }
 }

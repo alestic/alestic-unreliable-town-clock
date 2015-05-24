@@ -9,6 +9,7 @@ sns_topic_arn="$1"
 region="$2"
 
 timestamp="$(date -u +"%Y-%m-%d %H:%M %Z")"
+day_of_week="$(date -u +"%a")"
 year=${timestamp:0:4}
 month=${timestamp:5:2}
 day=${timestamp:8:2}
@@ -24,6 +25,7 @@ message='{
   "day": "'$day'",
   "hour": "'$hour'",
   "minute": "'$minute'",
+  "day_of_week": "'$day_of_week'",
   "unique_id": "'$(uuidgen)'",
   "region": "'$region'",
   "sns_topic_arn": "'$sns_topic_arn'",

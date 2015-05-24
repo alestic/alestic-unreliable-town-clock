@@ -180,6 +180,7 @@
       "Type" : "AWS::AutoScaling::LaunchConfiguration",
       "Properties" : {
         "KeyName" : { "Ref" : "SshKeyName" },
+        "SpotPrice" : "0.020",
         "ImageId" : { "Fn::FindInMap" : [ "AMIRegionMap", { "Ref" : "AWS::Region" }, "AMIID" ] },
         "SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
         "InstanceType" : { "Ref" : "InstanceType" },
@@ -192,26 +193,11 @@
           "curl --location --retry 10 -o $install ", { "Ref" : "InstallScriptURL" }, "\n",
           "chmod 700 $install", "\n",
           "$install ",
-            "'", { "Ref" : "WaitForInstanceWaitHandle" }, "' ",
             "'", { "Ref" : "UnreliableTownClockTopic" }, "' ",
             "'", { "Ref" : "AWS::Region" }, "' ",
             "\n",
           ""
         ]]}}
-      }
-    },
-
-    "WaitForInstanceWaitHandle" : {
-      "Type" : "AWS::CloudFormation::WaitConditionHandle",
-      "Properties" : {
-      }
-    },
-    "WaitForInstance" : {
-      "Type" : "AWS::CloudFormation::WaitCondition",
-      "DependsOn" : "ServerGroup",
-      "Properties" : {
-        "Handle" : { "Ref" : "WaitForInstanceWaitHandle" },
-        "Timeout" : "900"
       }
     },
 

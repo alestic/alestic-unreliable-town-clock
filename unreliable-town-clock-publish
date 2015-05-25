@@ -7,6 +7,7 @@
 
 sns_topic_arn="$1"
 region="$2"
+support="$3"
 
 timestamp="$(date -u +"%Y-%m-%d %H:%M %Z")"
 year=${timestamp:0:4}
@@ -30,6 +31,7 @@ message='{
   "region": "'$region'",
   "sns_topic_arn": "'$sns_topic_arn'",
   "reference": "https://github.com/alestic/alestic-unreliable-town-clock",
+  "support": "'"$support"'",
   "disclaimer": "UNRELIABLE SERVICE {ACCURACY,CONSISTENCY,UPTIME,LONGEVITY}"
 }'
 payload=$(echo -n "$message" |

@@ -16,6 +16,11 @@
       "MinLength": 6,
       "Default": "your-address@example.com"
     },
+    "Support": {
+      "Description": "Support text to include in every chime message",
+      "Type" : "String",
+      "Default": ""
+    },
     "SshKeyName" : {
       "Description" : "The EC2 keypair to allow SSH access to the instance",
       "Type" : "String",
@@ -195,6 +200,7 @@
           "$install ",
             "'", { "Ref" : "UnreliableTownClockTopic" }, "' ",
             "'", { "Ref" : "AWS::Region" }, "' ",
+            "'", { "Ref" : "Support" }, "' ",
             "\n",
           ""
         ]]}}

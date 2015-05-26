@@ -57,7 +57,7 @@
       }
     },
 
-    "UnreliableTownClockTopic": {
+    "topic": {
       "Type": "AWS::SNS::Topic",
       "Properties": {
         "Subscription": [ {
@@ -90,7 +90,7 @@
                   "SNS:AddPermission",
                   "SNS:Subscribe"
                 ],
-                "Resource": { "Ref": "UnreliableTownClockTopic" },
+                "Resource": { "Ref": "topic" },
                 "Condition": {
                   "StringEquals": {
                     "AWS:SourceOwner": { "Ref": "AWS::AccountId" }
@@ -107,7 +107,7 @@
                   "SNS:Receive",
                   "SNS:Subscribe"
                 ],
-                "Resource": { "Ref": "UnreliableTownClockTopic" },
+                "Resource": { "Ref": "topic" },
                 "Condition": {
                   "StringEquals": {
                     "SNS:Protocol": [
@@ -120,7 +120,7 @@
               }
             ]
           },
-          "Topics" : [ { "Ref": "UnreliableTownClockTopic" } ]
+          "Topics" : [ { "Ref": "topic" } ]
         }
     },
 
@@ -166,7 +166,7 @@
                 "Action": [
                   "sns:Publish"
                 ],
-                "Resource": { "Ref" : "UnreliableTownClockTopic" }
+                "Resource": { "Ref" : "topic" }
             } ]
           },
           "Roles": [ { "Ref": "Role" } ]
@@ -198,7 +198,7 @@
           "curl --location --retry 10 -o $install ", { "Ref" : "InstallScriptURL" }, "\n",
           "chmod 700 $install", "\n",
           "$install ",
-            "'", { "Ref" : "UnreliableTownClockTopic" }, "' ",
+            "'", { "Ref" : "topic" }, "' ",
             "'", { "Ref" : "AWS::Region" }, "' ",
             "'", { "Ref" : "Support" }, "' ",
             "\n",
@@ -223,7 +223,7 @@
 
   "Outputs" : {
     "SNSTopic" : {
-      "Value" : { "Ref" : "UnreliableTownClockTopic" }
+      "Value" : { "Ref" : "topic" }
     },
     "SecurityGroup" : {
       "Value" : { "Ref" : "InstanceSecurityGroup" }

@@ -7,7 +7,7 @@ Topic that sends "chime" events to subscribers every quarter hour.
 For more information about what the service does and how to use it,
 please read the following article:
 
-  Schedule Recurring AWS Lambda Invocations With The Unreliable Town
-  Clock (UTC)
+>  Schedule Recurring AWS Lambda Invocations With The Unreliable Town
+>  Clock (UTC)
 
-  https://alestic.com/2015/05/aws-lambda-recurring-schedule/
+>  <https://alestic.com/2015/05/aws-lambda-recurring-schedule/>

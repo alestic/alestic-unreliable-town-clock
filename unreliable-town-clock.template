@@ -59,6 +59,7 @@
 
     "topic": {
       "Type": "AWS::SNS::Topic",
+      "DeletionPolicy" : "Retain",
       "Properties": {
         "Subscription": [ {
             "Protocol": "email",

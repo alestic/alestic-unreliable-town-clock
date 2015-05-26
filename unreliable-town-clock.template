@@ -7,8 +7,8 @@
     "InstanceType" : {
       "Description" : "EC2 instance type",
       "Type" : "String",
-      "AllowedValues" : ["t1.micro"],
-      "Default" : "t1.micro"
+      "AllowedValues" : ["t2.micro"],
+      "Default" : "t2.micro"
     },
     "OperatorEmail": {
       "Description": "Email address to notify if there are any scaling operations",
@@ -35,15 +35,15 @@
 
   "Mappings" : {
     "AMIRegionMap" : {
-      "us-east-1"      : { "AMIID" : "ami-6ab2a702" },
-      "us-west-1"      : { "AMIID" : "ami-fb7f90bf" },
-      "us-west-2"      : { "AMIID" : "ami-d986b7e9" },
-      "eu-central-1"   : { "AMIID" : "ami-5ac5fa47" },
-      "eu-west-1"      : { "AMIID" : "ami-cf7a12b8" },
-      "ap-northeast-1" : { "AMIID" : "ami-c4c807c4" },
-      "ap-southeast-1" : { "AMIID" : "ami-94f0cfc6" },
-      "ap-southeast-2" : { "AMIID" : "ami-b9027d83" },
-      "sa-east-1"      : { "AMIID" : "ami-7b991e66" }
+      "us-east-1"      : { "AMIID" : "ami-76b2a71e" },
+      "us-west-1"      : { "AMIID" : "ami-af7f90eb" },
+      "us-west-2"      : { "AMIID" : "ami-3789b807" },
+      "eu-central-1"   : { "AMIID" : "ami-48c5fa55" },
+      "eu-west-1"      : { "AMIID" : "ami-b97a12ce" },
+      "ap-northeast-1" : { "AMIID" : "ami-d4c807d4" },
+      "ap-southeast-1" : { "AMIID" : "ami-84f0cfd6" },
+      "ap-southeast-2" : { "AMIID" : "ami-af027d95" },
+      "sa-east-1"      : { "AMIID" : "ami-65991e78" }
     }
   },
 
@@ -187,7 +187,6 @@
       "Type" : "AWS::AutoScaling::LaunchConfiguration",
       "Properties" : {
         "KeyName" : { "Ref" : "SshKeyName" },
-        "SpotPrice" : "0.020",
         "ImageId" : { "Fn::FindInMap" : [ "AMIRegionMap", { "Ref" : "AWS::Region" }, "AMIID" ] },
         "SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
         "InstanceType" : { "Ref" : "InstanceType" },

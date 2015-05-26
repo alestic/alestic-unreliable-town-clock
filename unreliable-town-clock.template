@@ -70,6 +70,7 @@
 
     "PublicSubscribeTopicPolicy": {
       "Type" : "AWS::SNS::TopicPolicy",
+      "DeletionPolicy" : "Retain",
       "Properties" : {
           "PolicyDocument" : {
             "Version": "2008-10-17",

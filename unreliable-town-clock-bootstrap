@@ -11,7 +11,7 @@ support="$3"
 echo "INSTANCE CONFIGURATION START"
 
 apt-get update
-apt-get install -y awscli
+apt-get install -y awscli ntp
 
 publish_source=https://raw.githubusercontent.com/alestic/alestic-unreliable-town-clock/master/unreliable-town-clock-publish
 publish=/usr/local/bin/unreliable-town-clock-publish

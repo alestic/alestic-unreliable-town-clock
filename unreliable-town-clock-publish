@@ -51,4 +51,5 @@ while ! aws sns publish \
 do
   test "$(date -u +"%Y-%m-%d %H:%M:%S %Z")" '>' "$retry_until" && break
   sleep 1
+  echo "RETRY"
 done

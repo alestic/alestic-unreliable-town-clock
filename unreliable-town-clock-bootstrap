@@ -2,7 +2,7 @@
 #
 # unreliable-town-clock-bootstrap
 #
-# https://github.com/alestic/alestic-unreliable-town-clock
+# http://townclock.io
 #
 sns_topic_arn="$1"
 region="$2"

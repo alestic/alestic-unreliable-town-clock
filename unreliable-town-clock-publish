@@ -21,6 +21,7 @@ day_of_week="$(date -u --date="$timestamp" +"%a")"
 
 subject="[Unreliable Town Clock] chime: $timestamp"
 message='{
+  "source" : "townclock.chime",
   "type" : "chime",
   "timestamp": "'$timestamp'",
   "year": "'$year'",
@@ -32,7 +33,7 @@ message='{
   "unique_id": "'$(uuidgen)'",
   "region": "'$region'",
   "sns_topic_arn": "'$sns_topic_arn'",
-  "reference": "https://github.com/alestic/alestic-unreliable-town-clock",
+  "reference": "http://townclock.io",
   "support": "'"$support"'",
   "disclaimer": "UNRELIABLE SERVICE"
 }'

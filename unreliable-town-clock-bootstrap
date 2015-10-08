@@ -19,7 +19,7 @@ curl -s --location --retry 10 -o $publish $publish_source
 chmod +x $publish
 
 cat <<EOF >/etc/cron.d/unreliable-town-clock
-0,15,30,45 * * * * ubuntu $publish "$sns_topic_arn" "$region" "$support"
+#0,15,30,45 * * * * ubuntu $publish "$sns_topic_arn" "$region" "$support"
 EOF
 
 echo "INSTANCE CONFIGURATION COMPLETE"

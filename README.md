@@ -1,15 +1,19 @@
-# alestic-unreliable-town-clock
+# TownClock.io - Unreliable Town Clock
 
-<http://townclock.io>
+This repository contains an AWS Lambda function that powers the public
+SNS topic with quarter hour chimes anybody can use to trigger AWS Lambda
+functions or SQS.
 
-This repository contains a CloudFormation template that sets up a
-stack of AWS resources to run an Unreliable Town Clock (UTC), a public
-SNS Topic that sends "chime" events to subscribers every quarter hour.
-
-For more information about what the service does and how to use it,
+For more information on what the service does and how to use it,
 please read the following article:
 
->  Schedule Recurring AWS Lambda Invocations With The Unreliable Town
->  Clock (UTC)
+> Schedule Recurring AWS Lambda Invocations With The Unreliable Town Clock (UTC)
 
->  <https://alestic.com/2015/05/aws-lambda-recurring-schedule/>
+> https://alestic.com/2015/05/aws-lambda-recurring-schedule/
+
+Notes:
+
+- This repository does not explain all of the steps necessary to set
+  up your own TownClock. This assumes the pre-existence of the SNS
+  topic, AWS Lambda function, CloudWatch Scheuduled Event Rule, and
+  IAM permissions.
